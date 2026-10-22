@@ -465,7 +465,7 @@ class LocaleTest(unittest.TestCase):
         self.assertEqual(locales.t("does_not_exist"), "does_not_exist")
 
     def test_all_app_keys_exist(self) -> None:
-        source = (ROOT / "app.py").read_text(encoding="utf-8")
+        source = (ROOT / "gel_app.py").read_text(encoding="utf-8")
         keys = set(re.findall(r'L\("([a-zA-Z0-9_]+)"', source))
         keys |= set(re.findall(r'\bt\("([a-zA-Z0-9_]+)"', source))
         missing = locales.missing_keys(*sorted(keys))

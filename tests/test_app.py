@@ -25,7 +25,7 @@ class DarkModeTest(unittest.TestCase):
     """Die Oberfläche startet hell und lässt sich auf Dunkelmodus umschalten."""
 
     def test_start_is_light_and_without_image(self) -> None:
-        at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+        at = AppTest.from_file(str(ROOT / "gel_app.py"), default_timeout=60)
         at.run()
         self.assertEqual(list(at.exception), [])
         self.assertEqual(len(at.image), 0)
@@ -40,7 +40,7 @@ class DarkModeTest(unittest.TestCase):
         self.assertIn("Schriftart", [field.label for field in at.selectbox])
 
     def test_toggle_adds_dark_styles(self) -> None:
-        at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+        at = AppTest.from_file(str(ROOT / "gel_app.py"), default_timeout=60)
         at.run()
         at.toggle[0].set_value(True).run()
         self.assertEqual(list(at.exception), [])
@@ -50,7 +50,7 @@ class DarkModeTest(unittest.TestCase):
         self.assertIn("--gdg-bg-cell", styles)
 
     def test_toggle_back_to_light(self) -> None:
-        at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+        at = AppTest.from_file(str(ROOT / "gel_app.py"), default_timeout=60)
         at.run()
         at.toggle[0].set_value(True).run()
         at.toggle[0].set_value(False).run()
