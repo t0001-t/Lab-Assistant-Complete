@@ -13,7 +13,7 @@ for name in ['streamlit', 'pydantic', 'reportlab', 'docx']:
     datas += d
     binaries += b
     hiddenimports += h
-hiddenimports += [p.stem for p in ROOT.glob('*.py') if p.name not in {'build_app.py', 'generate_icons.py', 'pwa_entrypoint.py', 'lab_assistant.py', 'app.py'}]
+hiddenimports += [p.stem for p in ROOT.glob('*.py') if p.name not in {'build_app.py', 'generate_icons.py', 'pwa_entrypoint.py', 'lab_assistant.py', 'app.py', 'gel_app.py'}]
 datas += copy_metadata('streamlit')
 hiddenimports += collect_submodules('streamlit')
 a = Analysis([str(ROOT / 'desktop' / 'desktop_server.py')], pathex=[str(ROOT)],
