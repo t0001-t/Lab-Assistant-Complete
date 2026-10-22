@@ -8,17 +8,42 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from streamlit.testing.v1 import AppTest
 
+import canvas_renderer as cr
+from demo_project import build_demo
+
 DARK_MARKER = "#131313"
 
 
 def _styles(at: AppTest) -> str:
     return "\n".join(str(element.value) for element in at.markdown)
+
+
+
+class EditorPerformanceTest(unittest.TestCase):
+    def test_editing_skips_exports_and_reuses_preview(self) -> None:
+        app = AppTest.from_file(str(ROOT / "gel_app.py"), default_timeout=60)
+        project = build_demo()[0]
+        original = project.panels[0].source_image.tobytes()
+        app.session_state["project"] = project
+        with patch.object(cr, "png_bytes", wraps=cr.png_bytes) as png, patch.object(
+            cr, "render_figure", wraps=cr.render_figure,
+        ) as render:
+            app.run()
+            self.assertEqual(list(app.exception), [])
+            png.assert_not_called()
+            self.assertEqual(render.call_count, 1)
+            app.run()
+            self.assertEqual(list(app.exception), [])
+            png.assert_not_called()
+            self.assertEqual(render.call_count, 1)
+        self.assertEqual(project.panels[0].source_image.tobytes(), original)
 
 
 class DarkModeTest(unittest.TestCase):
