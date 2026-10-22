@@ -47,3 +47,13 @@ Exportbilder und PNG-/TIFF-/PDF-/ZIP-Dateien werden erst beim Öffnen des
 Export-Reiters erzeugt. Die Bearbeitungsreiter teilen sich identische
 Vorschaubilder. Exportauflösung und Bildqualität bleiben unverändert.
 Streamlit 1.66 oder neuer ist erforderlich.
+
+## Darstellung wie in der lokalen PWA
+
+Für Streamlit-Hosting `app.py` als Startdatei und Python 3.12 wählen.
+Die Zusatzdateien `.streamlit/static/pwa-ui.css` und `pwa-icons.js` werden
+auch ohne PWA-Gateway eingebunden: Seitenleiste, Abstände, Unterstreichungen
+und lokale SVG-Symbole entsprechen damit dem lokalen Browser.
+Streamlit ist auf die lokal getestete Version 1.66.1 festgelegt.
+Die Ladeoptimierung des Gel-Editors ist enthalten. Netzwerk und ein ruhender
+Hosting-Server können die Online-Startzeit zusätzlich beeinflussen.

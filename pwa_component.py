@@ -9,10 +9,22 @@ from __future__ import annotations
 
 import base64
 import json
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
+import streamlit as st
 import streamlit.components.v1 as components
+
+@lru_cache(maxsize=1)
+def standalone_ui_assets() -> tuple[str, str]:
+    """Dieselben lokalen UI-Dateien wie beim PWA-Gateway, ohne Netzabruf."""
+    root = Path(__file__).resolve().parent / ".streamlit" / "static"
+    return (
+        (root / "pwa-ui.css").read_text(encoding="utf-8"),
+        (root / "pwa-icons.js").read_text(encoding="utf-8"),
+    )
+
 
 def inject_pwa(
     name: str = "Lab Assistant",
@@ -70,6 +82,25 @@ def inject_pwa(
     }
     manifest_json = json.dumps(manifest, ensure_ascii=False)
     manifest_b64 = base64.b64encode(manifest_json.encode()).decode()
+
+    # Auch beim direkten Start (z. B. Streamlit Cloud) das Gateway-Layout laden.
+    ui_css, icon_script = standalone_ui_assets()
+    st.markdown("<style>" + ui_css + "</style>", unsafe_allow_html=True)
+    icon_bootstrap = """
+    <script>
+    (() => {
+      try {
+        const document = window.parent.document;
+        if (document.querySelector('script[src^="/pwa-icons.js"]') ||
+            document.documentElement.dataset.labInlineIcons) return;
+        document.documentElement.dataset.labInlineIcons = "ready";
+        const MutationObserver = window.parent.MutationObserver;
+        const requestAnimationFrame = window.parent.requestAnimationFrame.bind(window.parent);
+    """ + icon_script + """
+      } catch (error) { console.warn('[Lab UI] Symbole konnten nicht geladen werden:', error); }
+    })();
+    </script>
+    """
 
     # HTML/JS Injection
     html_code = f"""
@@ -154,7 +185,7 @@ def inject_pwa(
     }})();
     </script>
     """
-    components.html(html_code, height=0, width=0)
+    components.html(icon_bootstrap + html_code, height=0, width=0)
 
 
 def inject_pwa_simple() -> None:
