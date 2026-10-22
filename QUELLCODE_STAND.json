@@ -1,5 +1,7 @@
 {
   "source": "Lab_Assistant_PWA_Identisch",
   "personal_data_included": false,
-  "files": 106
+  "files": 108,
+  "entrypoint": "app.py",
+  "standalone_gel_entrypoint": "gel_app.py"
 }

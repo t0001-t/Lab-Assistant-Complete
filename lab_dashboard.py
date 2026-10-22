@@ -2,7 +2,7 @@
 
 The dashboard is the entry point of the unified shell. It only reads the gel
 project state for the demo button and never imports the gel renderer, so the
-SDS-PAGE pipeline stays isolated in ``app.py``.
+SDS-PAGE pipeline stays isolated in ``gel_app.py``.
 """
 
 from __future__ import annotations

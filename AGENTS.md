@@ -36,7 +36,7 @@ Modulgrenzen.
 | `lab_exports.py` | Markdown-Subset nach PDF/DOCX |
 | `lab_locales.py` | DE/EN-Texte der neuen Module, `tr()` |
 | `lab_theme.py` | Hell-/Dunkel-CSS der Shell |
-| `app.py` | Gel-Editor: Tabs 1–5, CSS, Caches, Export-UI; `editor_options()` als Sidebar (einzeln) oder Editor-Panel (Shell) |
+| `gel_app.py` | Gel-Editor: Tabs 1–5, CSS, Caches, Export-UI; `editor_options()` als Sidebar (einzeln) oder Editor-Panel (Shell) |
 | `models.py` | Pydantic-v2-Modelle, Defaults, Bild-Base64, Migrationen |
 | `locales.py` | Übersetzungstabellen DE/EN, `t()`, `translator()`, `missing_keys()` |
 | `image_processing.py` | Laden, Perspektive, Justierung, Harmonisierung, Detektion |
@@ -53,9 +53,9 @@ Datenfluss Gel: Bild laden → `process_panel()` → `render_figure()` /
 
 Datenfluss Shell: Dashboard → Modulwahl (`lab_module`) → Seite; Notizbuch und
 Kalender öffnen jeweils eigene SQLite-Dateien im Datenordner. Die Shell startet
-den Gel-Editor per `runpy.run_path("app.py")` mit `lab_shell=True`; `app.py`
+den Gel-Editor per `runpy.run_path("gel_app.py")` mit `lab_shell=True`; `gel_app.py`
 überspringt dann `st.set_page_config` und fügt sich in die Shell ein. Die
-globale Sidebar enthält nur Shell-Funktionen; `app.py` rendert seine
+globale Sidebar enthält nur Shell-Funktionen; `gel_app.py` rendert seine
 gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
 **Editor-Optionen**, im eigenständigen Betrieb weiterhin in `st.sidebar`.
 
@@ -68,7 +68,7 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
   Seitenleisten-Ziel.
 - `lab_lang` (`de`/`en`) und `lab_theme` (`light`/`dark`) liegen in
   `st.session_state`. Die Shell injiziert `lab_theme.shell_css()` nur außerhalb
-  des Gel-Editors; `app.py` behält sein eigenes `ui_theme` und wird vor dem
+  des Gel-Editors; `gel_app.py` behält sein eigenes `ui_theme` und wird vor dem
   Start auf `lab_theme` gesetzt, nach dem Lauf zurückgelesen.
 - Die globale Sidebar ist in jedem Modul identisch: Marke, fünf Navigationsziele,
   Einstellungen, Hilfe und Datenschutzhinweis. Sie enthält **keine**
@@ -76,7 +76,7 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
   dieser Sidebar. Popover-Inhalte gehören zum Hauptskript; Widget-Änderungen
   rerendern daher die ganze App und das CSS wird neu injiziert. `st.dialog`
   wäre ein Fragment und würde Theme-/Sprachwechsel nicht zuverlässig anwenden.
-- `app.py:editor_options()` kapselt Projekt, Export und Harmonisierung. Im
+- `gel_app.py:editor_options()` kapselt Projekt, Export und Harmonisierung. Im
   Standalone-Betrieb wird die Funktion in `st.sidebar` gerendert; bei
   `lab_shell=True` erscheint sie im Popover **Editor-Optionen** oben rechts am
   Editor. Typografie und Spurnummern liegen in `typography_controls()` im
@@ -194,7 +194,7 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
 
 ## Zweisprachigkeit
 
-- **Kein hartkodierter UI-Text.** Immer `L("key")` (in `app.py`, nutzt
+- **Kein hartkodierter UI-Text.** Immer `L("key")` (in `gel_app.py`, nutzt
   `ss.project.lang`), `T("key")` (in `lab_dashboard.py`/`lab_pages.py`, nutzt
   `lab_lang`) bzw. `tr("key", lang)` in reinen Modulen.
 - Neue Schlüssel in `locales.py` (Gel) und `lab_locales.py` (Shell) jeweils in
@@ -234,7 +234,7 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
 - 172 Tests:
   - Gel: `test_engine.py` (Rendering, Gel-Unberührtheit, Themes, Layout, Pfeile,
     Verarbeitung, Harmonisierung, Komposition, Export, Persistenz, Analyse,
-    Zähleingaben, Locales, Rich-Labels), `test_workflow.py`, `test_app.py`.
+    Zähleingaben, Locales, Rich-Labels), `test_workflow.py`, `test_gel_app.py`.
   - Neue Module: `test_lab_calculators.py` (inkl. Einheiten und qPCR),
     `test_lab_eln.py` (inkl. Ordnerfarben, To-dos, Universal-Import),
     `test_lab_exports.py`, `test_lab_synthesis.py`, `test_lab_locales.py`,
@@ -253,7 +253,7 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
   Base64-Bildern, ZIP-Paket.
 - `base_name` enthält einen Zeitstempel (`%Y%m%d_%H%M`), dadurch wird das ZIP
   spätestens jede Minute neu gepackt – unkritisch, aber beim Cachen beachten.
-- Quelldateien als PDF: `./.venv/bin/python tools/source_pdf.py app.py exports/app_py.pdf "Titel"`
+- Quelldateien als PDF: `./.venv/bin/python tools/source_pdf.py gel_app.py exports/app_py.pdf "Titel"`
   (benötigt `reportlab` in der venv, nicht Teil der App-Abhängigkeiten).
 
 ## Fallstricke
@@ -282,7 +282,7 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
 1. `./.venv/bin/python -m unittest discover -s tests` grün (161+ Tests).
 2. `./.venv/bin/ruff check . --exclude .venv` ohne Befund.
 3. UI-Änderung im Browser auf Port 8502 geprüft (beide Sprachen, hell und
-   dunkel, ohne Exception im Log). Bei Gel-Änderungen zusätzlich `app.py`
+   dunkel, ohne Exception im Log). Bei Gel-Änderungen zusätzlich `gel_app.py`
    einzeln starten.
 4. Doku aktualisiert, wenn sich Verhalten oder Bedienung ändert
    (`README.md` für Nutzer, `SPEC.md` für Anforderungen).

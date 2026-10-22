@@ -2,6 +2,15 @@
 
 Vollständiger Lab Assistant mit Gel-Editor, elektronischem Laborbuch, Praktikumsordnern, Laborrechnern und Kalender. Dies ist die ursprüngliche Python-/Streamlit-Anwendung vor dem eigenständigen Vercel-Umbau.
 
+## Einstiegspunkt
+
+**`app.py` startet den gesamten Lab Assistant** mit Übersicht, Notizen,
+Praktikumsordnern, Gel-Editor, Laborrechner und Kalender.
+Für Streamlit-Hosting als Startdatei `app.py` auswählen.
+Der einzelne Gel-Editor liegt in `gel_app.py`.
+Das gesamte Repository einschließlich `assets/`, `components/` und `.streamlit/`
+herunterladen; eine einzelne Python-Datei enthält nicht die gesamte Anwendung.
+
 ## Lokal starten
 
 Python 3.12 wird empfohlen.
@@ -13,7 +22,8 @@ pip install -r requirements.txt
 python pwa_server.py --port 8502 --backend-port 8503
 ```
 
-Danach http://127.0.0.1:8502 öffnen. Unter Windows die virtuelle Umgebung mit `.venv\Scripts\activate` aktivieren.
+Danach http://127.0.0.1:8502 öffnen. Alternativ ohne PWA-Proxy:
+`streamlit run app.py`. Unter Windows die virtuelle Umgebung mit `.venv\Scripts\activate` aktivieren.
 
 ## Daten
 

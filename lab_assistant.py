@@ -1,6 +1,6 @@
 """Unified local launcher for the All-in-One Lab Assistant.
 
-The SDS-PAGE editor remains a self-contained Streamlit script (``app.py``).
+The SDS-PAGE editor remains a self-contained Streamlit script (``gel_app.py``).
 This shell only adds navigation, the dashboard, calculators, notebook, calendar
 and shared settings; it does not modify the gel renderer or image pipeline.
 """
@@ -90,7 +90,7 @@ elif module == "notebook":
 elif module == "gel":
     st.session_state["lab_shell"] = True
     st.session_state["ui_theme"] = st.session_state.lab_theme
-    runpy.run_path(str(ROOT / "app.py"), run_name="__main__")
+    runpy.run_path(str(ROOT / "gel_app.py"), run_name="__main__")
 elif module == "calculators":
     calculator_page()
 elif module == "calendar":
