@@ -181,7 +181,9 @@ gel-spezifischen Optionen in der Shell über `editor_options()` im Popover
   `[data-testid="stSelectboxVirtualDropdown"]`, Checkbox/Radio mit
   `div:first-of-type` (davor liegt der versteckte Input).
 - Bestätigungen als `st.toast` (`show_flash()`), keine `st.success`-Kaskaden.
-- `st.tabs` ohne `key` verwenden; die Tab-Reihenfolge ist
+- Haupt-Tabs mit `on_change="rerun"` und ohne `key` verwenden. Den Export nur
+  innerhalb von `if tab_export.open` berechnen; Bearbeitungsreiter teilen identische
+  Vorschaubilder. Die Tab-Reihenfolge ist
   Import, Spuren, Marker, Zielbanden, Export.
 - Shell-CSS nur in `lab_theme.py` pflegen (`.la-*`, Kalender, Kennzahlen). Es
   wird für den Gel-Editor bewusst nicht injiziert, damit dessen Layout und

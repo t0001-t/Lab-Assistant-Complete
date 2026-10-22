@@ -738,7 +738,7 @@ def preview_figure(target: GelPanel, gel: Image.Image, mode: str) -> tuple[Image
     Ohne Cache würde bei jedem Rerun jede der drei Editor-Vorschauen neu
     gerendert und kodiert, obwohl sich meist nur eine davon geändert hat.
     """
-    key = f"{target.id}:{mode}"
+    key = target.id  # Alle Bearbeitungsmodi verwenden dieselbe unmarkierte Abbildung.
     sig = (target.model_dump_json(), preview_opts.model_dump_json(), gel.size, id(target.source_image))
     entry = ss.preview_cache.get(key)
     if entry is not None and entry[0] == sig:
@@ -813,7 +813,8 @@ if gel is not None:
 show_flash()
 
 tabs = st.tabs(
-    [L("tab_import"), L("tab_lanes"), L("tab_markers"), L("tab_targets"), L("tab_export")]
+    [L("tab_import"), L("tab_lanes"), L("tab_markers"), L("tab_targets"), L("tab_export")],
+    on_change="rerun",
 )
 tab_import, tab_lanes, tab_markers, tab_targets, tab_export = tabs
 
@@ -1635,121 +1636,122 @@ def export_bytes(kind: str, figure: Image.Image) -> bytes:
     return data
 
 
-with tab_export:
-    st.subheader(L("export_title"))
+if tab_export.open:
+    with tab_export:
+        st.subheader(L("export_title"))
 
-    export_panels, export_gels, figures = render_all()
-    if not figures:
-        st.info(L("export_no_source"))
-    else:
-        logs = {p.id: (p.letter, p.name) for p in ss.project.panels}
-        gel_sizes = {panel_item.id: g.size for panel_item, g in zip(export_panels, export_gels, strict=True)}
-        combined = cr.compose_panels(figures, gutter=ss.project.export.gutter_px, background=options.colors["background"])
-        stamp = datetime.now().strftime("%Y%m%d_%H%M")
-        base_name = f"sds_page_{stamp}"
-
-        scope_values = ["single", "combined"]
-        scope = choice(
-            L("export_preview"),
-            scope_values,
-            [L("export_single"), L("export_combined")],
-            0,
-            horizontal=True,
-            key="export_scope",
-        )
-        if scope == "combined":
-            figure = combined
-            crop_name = "kombiniert"
+        export_panels, export_gels, figures = render_all()
+        if not figures:
+            st.info(L("export_no_source"))
         else:
-            active_index = next((i for i, p in enumerate(export_panels) if p.id == active.id), 0)
-            figure = figures[active_index]
-            crop_name = active.letter
+            logs = {p.id: (p.letter, p.name) for p in ss.project.panels}
+            gel_sizes = {panel_item.id: g.size for panel_item, g in zip(export_panels, export_gels, strict=True)}
+            combined = cr.compose_panels(figures, gutter=ss.project.export.gutter_px, background=options.colors["background"])
+            stamp = datetime.now().strftime("%Y%m%d_%H%M")
+            base_name = f"sds_page_{stamp}"
 
-        export_image_col, export_ctl_col = work_area("export")
-
-        with export_image_col, st.container(key="gd-sticky-export"):
-            st.image(
-                display_png(figure),
-                caption=f"{figure.width} × {figure.height} px · {ss.project.export.dpi} DPI",
-                width="stretch",
+            scope_values = ["single", "combined"]
+            scope = choice(
+                L("export_preview"),
+                scope_values,
+                [L("export_single"), L("export_combined")],
+                0,
+                horizontal=True,
+                key="export_scope",
             )
+            if scope == "combined":
+                figure = combined
+                crop_name = "kombiniert"
+            else:
+                active_index = next((i for i, p in enumerate(export_panels) if p.id == active.id), 0)
+                figure = figures[active_index]
+                crop_name = active.letter
 
-        with export_ctl_col, st.container(key="gd-scroll-export"):
-            st.markdown(f"##### {L('export_title')}")
-            png = export_bytes("png", figure)
-            tiff = export_bytes("tiff", figure)
-            pdf = export_bytes("pdf", figure)
-            st.download_button(L("export_png"), data=png, file_name=f"{base_name}_{crop_name}.png", mime="image/png", type="primary", width="stretch")
-            st.download_button(L("export_tiff"), data=tiff, file_name=f"{base_name}_{crop_name}.tiff", mime="image/tiff", width="stretch")
-            st.download_button(L("export_pdf"), data=pdf, file_name=f"{base_name}_{crop_name}.pdf", mime="application/pdf", width="stretch")
-            csv_data = cr.metadata_csv(ss.project, gel_sizes).encode("utf-8")
-            json_data = cr.metadata_json(ss.project, gel_sizes).encode("utf-8")
-            st.download_button(
-                L("export_csv"),
-                data=csv_data,
-                file_name=f"{base_name}_metadaten.csv",
-                mime="text/csv",
-                width="stretch",
-            )
-            st.download_button(
-                L("export_json"),
-                data=json_data,
-                file_name=f"{base_name}_metadaten.json",
-                mime="application/json",
-                width="stretch",
-            )
+            export_image_col, export_ctl_col = work_area("export")
 
-            archive = export_archive(base_name, export_panels, figures, combined, gel_sizes)
-            st.download_button(L("export_zip"), data=archive, file_name=f"{base_name}.zip", mime="application/zip", width="stretch")
+            with export_image_col, st.container(key="gd-sticky-export"):
+                st.image(
+                    display_png(figure),
+                    caption=f"{figure.width} × {figure.height} px · {ss.project.export.dpi} DPI",
+                    width="stretch",
+                )
+
+            with export_ctl_col, st.container(key="gd-scroll-export"):
+                st.markdown(f"##### {L('export_title')}")
+                png = export_bytes("png", figure)
+                tiff = export_bytes("tiff", figure)
+                pdf = export_bytes("pdf", figure)
+                st.download_button(L("export_png"), data=png, file_name=f"{base_name}_{crop_name}.png", mime="image/png", type="primary", width="stretch")
+                st.download_button(L("export_tiff"), data=tiff, file_name=f"{base_name}_{crop_name}.tiff", mime="image/tiff", width="stretch")
+                st.download_button(L("export_pdf"), data=pdf, file_name=f"{base_name}_{crop_name}.pdf", mime="application/pdf", width="stretch")
+                csv_data = cr.metadata_csv(ss.project, gel_sizes).encode("utf-8")
+                json_data = cr.metadata_json(ss.project, gel_sizes).encode("utf-8")
+                st.download_button(
+                    L("export_csv"),
+                    data=csv_data,
+                    file_name=f"{base_name}_metadaten.csv",
+                    mime="text/csv",
+                    width="stretch",
+                )
+                st.download_button(
+                    L("export_json"),
+                    data=json_data,
+                    file_name=f"{base_name}_metadaten.json",
+                    mime="application/json",
+                    width="stretch",
+                )
+
+                archive = export_archive(base_name, export_panels, figures, combined, gel_sizes)
+                st.download_button(L("export_zip"), data=archive, file_name=f"{base_name}.zip", mime="application/zip", width="stretch")
+
+                st.divider()
+                if gel is not None:
+                    st.download_button(
+                        L("export_working_view"),
+                        data=working_view_png(active, gel),
+                        file_name=f"{base_name}_arbeitsansicht.png",
+                        mime="image/png",
+                        width="stretch",
+                        help=L("export_working_help"),
+                    )
+                layout = cr.compute_layout(active, gel.size, options) if gel is not None else None
+                if layout is not None:
+                    st.caption(
+                        L("export_canvas_info", cw=layout.canvas_w, ch=layout.canvas_h, hh=layout.header_h, lm=layout.left_margin, rm=layout.right_margin)
+                    )
 
             st.divider()
-            if gel is not None:
-                st.download_button(
-                    L("export_working_view"),
-                    data=working_view_png(active, gel),
-                    file_name=f"{base_name}_arbeitsansicht.png",
-                    mime="image/png",
+            s1, s2 = st.columns(2)
+            with s1:
+                st.markdown(f"##### {L('export_lanes_title')}")
+                st.dataframe(
+                    pd.DataFrame(
+                        {
+                            L("meta_panel"): [p.letter for p in export_panels for _ in p.lanes],
+                            L("lanes_table_index"): [i + 1 for p in export_panels for i in range(len(p.lanes))],
+                            L("meta_sample"): [lane.label_top for p in export_panels for lane in p.lanes],
+                            L("meta_role"): [L("role_marker") if p.is_marker_lane(i) else L("role_sample") for p in export_panels for i in range(len(p.lanes))],
+                        }
+                    ),
+                    hide_index=True,
                     width="stretch",
-                    help=L("export_working_help"),
                 )
-            layout = cr.compute_layout(active, gel.size, options) if gel is not None else None
-            if layout is not None:
-                st.caption(
-                    L("export_canvas_info", cw=layout.canvas_w, ch=layout.canvas_h, hh=layout.header_h, lm=layout.left_margin, rm=layout.right_margin)
+            with s2:
+                st.markdown(f"##### {L('export_targets_title')}")
+                st.dataframe(
+                    pd.DataFrame(
+                        {
+                            L("meta_panel"): [p.letter for p in export_panels for _ in p.arrows],
+                            L("targets_table_label"): [a.label for p in export_panels for a in p.arrows],
+                            L("targets_table_y"): [f"{a.y_pos_rel * 100:.1f}" for p in export_panels for a in p.arrows],
+                            L("targets_table_side"): [L("side_left") if a.side == "left" else L("side_right") for p in export_panels for a in p.arrows],
+                        }
+                    ),
+                    hide_index=True,
+                    width="stretch",
                 )
 
-        st.divider()
-        s1, s2 = st.columns(2)
-        with s1:
-            st.markdown(f"##### {L('export_lanes_title')}")
-            st.dataframe(
-                pd.DataFrame(
-                    {
-                        L("meta_panel"): [p.letter for p in export_panels for _ in p.lanes],
-                        L("lanes_table_index"): [i + 1 for p in export_panels for i in range(len(p.lanes))],
-                        L("meta_sample"): [lane.label_top for p in export_panels for lane in p.lanes],
-                        L("meta_role"): [L("role_marker") if p.is_marker_lane(i) else L("role_sample") for p in export_panels for i in range(len(p.lanes))],
-                    }
-                ),
-                hide_index=True,
-                width="stretch",
-            )
-        with s2:
-            st.markdown(f"##### {L('export_targets_title')}")
-            st.dataframe(
-                pd.DataFrame(
-                    {
-                        L("meta_panel"): [p.letter for p in export_panels for _ in p.arrows],
-                        L("targets_table_label"): [a.label for p in export_panels for a in p.arrows],
-                        L("targets_table_y"): [f"{a.y_pos_rel * 100:.1f}" for p in export_panels for a in p.arrows],
-                        L("targets_table_side"): [L("side_left") if a.side == "left" else L("side_right") for p in export_panels for a in p.arrows],
-                    }
-                ),
-                hide_index=True,
-                width="stretch",
-            )
-
-        st.success(L("export_success"))
+            st.success(L("export_success"))
 
 st.divider()
 st.caption("GelDoc Studio · " + L("app_title"))

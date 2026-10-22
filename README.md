@@ -40,3 +40,10 @@ LAB_ASSISTANT_DATA_DIR=/tmp/lab-assistant-test python -m unittest discover -s te
 Die vollständige Streamlit-Anwendung benötigt einen laufenden Python-Server. `Dockerfile` und `docker-compose.yml` sind enthalten. Der separate, noch in Bearbeitung befindliche Vercel-Gel-Editor gehört nicht zu diesem Repository.
 
 Weitere technische Hinweise stehen in `SPEC.md` und `AGENTS.md`.
+
+## Geschwindigkeit des Gel-Editors
+
+Exportbilder und PNG-/TIFF-/PDF-/ZIP-Dateien werden erst beim Öffnen des
+Export-Reiters erzeugt. Die Bearbeitungsreiter teilen sich identische
+Vorschaubilder. Exportauflösung und Bildqualität bleiben unverändert.
+Streamlit 1.66 oder neuer ist erforderlich.
