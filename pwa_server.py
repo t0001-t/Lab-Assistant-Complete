@@ -30,9 +30,9 @@ HEAD_TAGS = (
     '<meta name="apple-mobile-web-app-capable" content="yes">'
     '<meta name="apple-mobile-web-app-title" content="LabAssistant">'
     '<link rel="apple-touch-icon" href="/static/assets/icon-192.png">'
-    '<link rel="stylesheet" href="/pwa-ui.css?v=1.0.8">'
-    '<script src="/pwa-icons.js?v=1.0.8" defer></script>'
-    '<script src="/pwa-runtime.js?v=1.0.8" defer></script>'
+    '<link rel="stylesheet" href="/pwa-ui.css?v=1.0.9">'
+    '<script src="/pwa-icons.js?v=1.0.9" defer></script>'
+    '<script src="/pwa-runtime.js?v=1.0.9" defer></script>'
 )
 HOP_HEADERS = {"connection", "keep-alive", "transfer-encoding", "upgrade", "proxy-authenticate",
                "proxy-authorization", "te", "trailer", "content-length", "content-encoding"}

@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="Lab Assistant",
     page_icon=str(ROOT / "assets" / "header_gel.png"),
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 module = st.query_params.get("module", "home")
 allowed = {"home", "notebook", "gel", "calculators", "calendar", "projects"}

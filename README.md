@@ -57,3 +57,9 @@ und lokale SVG-Symbole entsprechen damit dem lokalen Browser.
 Streamlit ist auf die lokal getestete Version 1.66.1 festgelegt.
 Die Ladeoptimierung des Gel-Editors ist enthalten. Netzwerk und ein ruhender
 Hosting-Server können die Online-Startzeit zusätzlich beeinflussen.
+
+## Kleine Fenster
+
+Die Seitenleiste lässt sich über den Pfeil oben ein- und ausklappen.
+Bei schmalen Fenstern stehen Arbeitsbereiche untereinander; Reiter bleiben
+horizontal scrollbar. Auf kleinen Bildschirmen startet die Seitenleiste automatisch eingeklappt.

@@ -1,8 +1,8 @@
 // sw.js – Service Worker für Lab Assistant PWA
-// Version: 1.0.8
+// Version: 1.0.9
 // Cache-Strategien: Cache-First (Static), Network-First (HTML), Stale-While-Revalidate (API)
 
-const CACHE_VERSION = 'v1.0.8';
+const CACHE_VERSION = 'v1.0.9';
 const STATIC_CACHE = `lab-assistant-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `lab-assistant-dynamic-${CACHE_VERSION}`;
 const OFFLINE_URL = '/static/offline.html';
@@ -11,9 +11,9 @@ const OFFLINE_URL = '/static/offline.html';
 const STATIC_ASSETS = [
   '/',
   '/static/manifest.json',
-  '/pwa-ui.css?v=1.0.8',
-  '/pwa-icons.js?v=1.0.8',
-  '/pwa-runtime.js?v=1.0.8',
+  '/pwa-ui.css?v=1.0.9',
+  '/pwa-icons.js?v=1.0.9',
+  '/pwa-runtime.js?v=1.0.9',
   '/static/offline.html',
   '/static/assets/icon-192.png',
   '/static/assets/icon-512.png',
