@@ -1,18 +1,17 @@
 """Startet die unveränderte Dokument-Vorlage mit den Laufzeitvoraussetzungen."""
 from __future__ import annotations
 
-import base64
 import runpy
 from pathlib import Path
 
 import streamlit as st
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent
 
 st.set_page_config(
     page_title="Lab Assistant",
-    page_icon="data:image/png;base64,"
-    + base64.b64encode((ROOT / "assets" / "browser_icon.png").read_bytes()).decode("ascii"),
+    page_icon=Image.open(ROOT / "assets" / "browser_icon.png"),
     layout="wide",
     initial_sidebar_state="auto",
 )
