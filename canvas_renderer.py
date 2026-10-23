@@ -629,6 +629,23 @@ def compute_layout(
 # ----------------------------------------------------------------------
 # Zeichnen: Kopf
 # ----------------------------------------------------------------------
+def _draw_condition_symbol(
+    draw: ImageDraw.ImageDraw, value: str, xy: tuple[float, float], size: int, fill: RGB,
+) -> bool:
+    """Einzelne Plus-/Minuszeichen ohne Abhängigkeit von installierten Glyphen."""
+    symbol = value.strip()
+    minus = symbol in {"-", "−", "–", "—", "﹣", "－"}
+    if not minus and symbol not in {"+", "＋"}:
+        return False
+    x, y = xy
+    half = max(2, round(size * 0.28))
+    width = max(1, round(size * 0.075))
+    draw.line((x - half, y, x + half, y), fill=fill, width=width)
+    if not minus:
+        draw.line((x, y - half, x, y + half), fill=fill, width=width)
+    return True
+
+
 def _draw_header(
     canvas: Image.Image,
     draw: ImageDraw.ImageDraw,
@@ -689,8 +706,11 @@ def _draw_header(
                 value = condition.value_for(index)
                 if not value:
                     continue
+                xy = (lane_x(lane.x_pos_rel), y)
+                if _draw_condition_symbol(draw, value, xy, layout.number_font_px * scale, color):
+                    continue
                 text = _ellipsize(value, font, int(pitch - 2 * scale))
-                draw.text((lane_x(lane.x_pos_rel), y), text, font=font, fill=color, anchor="mm")
+                draw.text(xy, text, font=font, fill=color, anchor="mm")
             cursor += row_h
 
     # Spuren-Labels (0°/45°/90°).

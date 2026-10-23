@@ -63,3 +63,9 @@ Hosting-Server können die Online-Startzeit zusätzlich beeinflussen.
 Die Seitenleiste lässt sich über den Pfeil oben ein- und ausklappen.
 Bei schmalen Fenstern stehen Arbeitsbereiche untereinander; Reiter bleiben
 horizontal scrollbar. Auf kleinen Bildschirmen startet die Seitenleiste automatisch eingeklappt.
+
+## Bedingungsmatrix
+
+Einzelne Plus- und Minuszeichen werden in Vorschau und Export unabhängig von
+den auf dem Server installierten Schriften gezeichnet. Die gespeicherten
+Bedingungswerte und frei eingegebene Texte bleiben unverändert.
