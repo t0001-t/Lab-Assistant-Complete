@@ -13,6 +13,7 @@ from streamlit.testing.v1 import AppTest
 
 from lab_calendar import CalendarStore
 from lab_eln import ELNStore
+from lab_private_storage import visitor_folder
 from lab_theme import shell_css
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,11 +21,20 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _shell() -> AppTest:
     app = AppTest.from_file(str(ROOT / "app.py"), default_timeout=60)
+    app.session_state["_lab_browser_credential"] = "a" * 64
     app.run()
     return app
 
 
 class ShellTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        env = patch.dict(os.environ, {"LAB_ASSISTANT_DATA_DIR": directory.name,
+                                      "LAB_ASSISTANT_STORAGE_MODE": "private"})
+        env.start()
+        self.addCleanup(env.stop)
+
     def test_calendar_direct_year_and_month_navigation(self) -> None:
         with tempfile.TemporaryDirectory() as temporary, patch.dict(os.environ, {"LAB_ASSISTANT_DATA_DIR": temporary}):
             app = _shell()
@@ -106,7 +116,7 @@ class ShellTests(unittest.TestCase):
 
     def test_dashboard_tiles_and_calendar(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            store = CalendarStore(temp)
+            store = CalendarStore(visitor_folder(Path(temp), "a" * 64))
             store.add_event("Zellpassage", "2026-10-22", "09:30", "incubation")
             with patch.dict(os.environ, {"LAB_ASSISTANT_DATA_DIR": temp}):
                 app = _shell()
@@ -123,7 +133,7 @@ class ShellTests(unittest.TestCase):
 
     def test_dashboard_folder_opens_notebook_day(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            store = ELNStore(temp)
+            store = ELNStore(visitor_folder(Path(temp), "a" * 64))
             practicum = store.add_practicum("Biochemie", "Protein")
             day = store.add_day(practicum, "2026-10-21", "SDS-PAGE", "Dr. A", "B")
             with patch.dict(os.environ, {"LAB_ASSISTANT_DATA_DIR": temp}):
@@ -154,7 +164,7 @@ class ShellTests(unittest.TestCase):
             next(button for button in app.button
                  if button.label == "Termin speichern").click().run()
             self.assertEqual(list(app.exception), [])
-            events = CalendarStore(temp).list_events()
+            events = CalendarStore(visitor_folder(Path(temp), "a" * 64)).list_events()
             self.assertEqual(len(events), 1)
             self.assertEqual(events[0]["title"], "Zellpassage")
             self.assertEqual(events[0]["time"], "09:30")
@@ -180,13 +190,13 @@ class ShellTests(unittest.TestCase):
             next(button for button in app.button
                  if button.label == "Aufgabe hinzufügen").click().run()
             self.assertEqual(list(app.exception), [])
-            events = CalendarStore(temp).list_events()
+            events = CalendarStore(visitor_folder(Path(temp), "a" * 64)).list_events()
             self.assertEqual(len(events), 1)
             self.assertEqual(events[0]["kind"], "todo")
             self.assertEqual(events[0]["date"], "2026-10-24")
             next(box for box in app.checkbox if box.label == "Abgabe prüfen").set_value(True).run()
             self.assertEqual(list(app.exception), [])
-            self.assertEqual(CalendarStore(temp).list_events(), [])
+            self.assertEqual(CalendarStore(visitor_folder(Path(temp), "a" * 64)).list_events(), [])
 
     def test_neubauer_form_reports_metrics(self) -> None:
         app = _shell()
@@ -205,7 +215,7 @@ class ShellTests(unittest.TestCase):
 class NotebookUITests(unittest.TestCase):
     def test_seeded_day_can_generate_and_save_protocol(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            store = ELNStore(temp)
+            store = ELNStore(visitor_folder(Path(temp), "a" * 64))
             practicum = store.add_practicum("Biochemie", "Protein")
             day = store.add_day(practicum, "2026-10-21", "SDS-PAGE", "Dr. A", "B")
             store.add_entry(day, "Messreihe", "text", "Probe A: 42 µL; 37 °C")

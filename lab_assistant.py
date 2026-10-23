@@ -22,6 +22,7 @@ from lab_dashboard import (
 )
 from lab_locales import tr
 from lab_pages import calculator_page, notebook_page
+from lab_private_storage import data_folder, is_local_storage
 from lab_theme import inject_theme
 
 # PWA Integration
@@ -60,6 +61,9 @@ module = st.session_state.lab_module
 
 inject_theme(dark)
 
+# Resolve browser identity in the visible main area, before hidden popovers.
+data_folder()
+
 # Sidebar
 with st.sidebar:
     st.markdown(
@@ -80,7 +84,7 @@ with st.sidebar:
         settings_controls()
     with st.popover(tr("help", lang), icon=":material/help:", width="stretch"):
         help_controls()
-    st.caption(tr("privacy_notice", lang))
+    st.caption(tr("privacy_notice" if is_local_storage() else "private_storage_notice", lang))
 
 # Routing
 if module == "home":

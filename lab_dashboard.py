@@ -8,7 +8,6 @@ SDS-PAGE pipeline stays isolated in ``gel_app.py``.
 from __future__ import annotations
 
 import html
-import os
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -24,6 +23,7 @@ from lab_calendar import (
 )
 from lab_eln import PRACTICUM_COLORS, ELNStore, normalize_color
 from lab_locales import tr
+from lab_private_storage import data_folder
 from lab_theme import colored_cards_css
 
 ROOT = Path(__file__).parent
@@ -47,10 +47,6 @@ def language() -> str:
 def T(key: str, **kwargs: object) -> str:
     text = tr(key, language())
     return text.format(**kwargs) if kwargs else text
-
-
-def data_folder() -> Path:
-    return Path(os.environ.get("LAB_ASSISTANT_DATA_DIR", ROOT / "lab_data"))
 
 
 def eln_store() -> ELNStore:

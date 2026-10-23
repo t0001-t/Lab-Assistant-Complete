@@ -370,3 +370,20 @@ Kalibrierkurven und Statistik sind nicht Teil des Funktionsumfangs.
 ## PWA-Referenznachbau
 
 Die vorgegebenen PWA-Dateien werden unverändert übernommen. Siehe PWA_VORLAGE.md, VORLAGEN_DATEIEN.json und START_HIER.md für Dateivergleich, Auslieferung und dokumentierte Grenzen der Vorlage.
+
+
+## Private Kalenderdaten pro Browser
+Standardmäßig erhält jeder Browser einen eigenen Datenbereich für Kalender,
+Kalenderfeeds, Aufgaben und Notizbuch. Ein zufälliger 256-Bit-Zugangsschlüssel
+liegt im Browser-Speicher, nie im Link. Der Server leitet daraus den Datenordner
+ab. Ohne gültigen Schlüssel wird keine gemeinsame Datenbank geöffnet.
+Ein weitergegebener normaler Link teilt keine Termine. Derselbe Browser bzw.
+dasselbe Profil verwendet denselben Bereich; ein anderes Gerät/Privatfenster
+oder gelöschter Browser-Speicher bedeutet einen neuen Bereich. Dies ersetzt
+keine Kontenanmeldung auf gemeinsam genutzten Geräten.
+Alte gemeinsame Daten werden nicht automatisch Besuchern zugeteilt oder kopiert.
+`LAB_ASSISTANT_DATA_DIR` bleibt das Stammverzeichnis; Hosting benötigt dauerhaften
+Speicher für Wiederherstellung nach Server-Neustarts. ICS-Export als Sicherung nutzen.
+Nur für eine vertrauenswürdige lokale Einzelplatzinstallation kann ausdrücklich
+`LAB_ASSISTANT_STORAGE_MODE=local` die bisherige lokale Ablage öffnen. Diesen
+Modus niemals für eine öffentlich geteilte Website setzen.

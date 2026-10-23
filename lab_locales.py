@@ -8,6 +8,12 @@ English string; ``tests/test_lab_locales.py`` checks this invariant.
 from __future__ import annotations
 
 TR: dict[str, tuple[str, str]] = {
+    "private_storage_loading": ("Privaten Speicher öffnen … Bitte Browser-Speicher zulassen.",
+                                "Opening private storage … Please allow browser storage."),
+    "private_storage_notice": ("Eigener Datenbereich für diesen Browser. Online werden Daten auf dem Server gespeichert. "
+                               "Browser-Speicher nicht löschen; Kalender regelmäßig als ICS sichern.",
+                               "Private data area for this browser. Online data is stored on the server. "
+                               "Keep browser storage; back up your calendar as ICS regularly."),
     "app": ("Lab Assistant", "Lab Assistant"),
     "app_short_subtitle": ("Gel · Rechner · Notizen", "Gels · Calculators · Notes"),
     "app_subtitle": ("Gel-Dokumentation, Laborrechner und elektronisches Laborbuch in einem Arbeitsbereich.",

@@ -1,0 +1,28 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body><script>
+const send = (type, extra = {}) => parent.postMessage({isStreamlitMessage:true, type, ...extra}, "*");
+window.addEventListener("message", async (event) => {
+  if (event.source !== parent || event.data.type !== "streamlit:render") return;
+  try {
+    const key = "lab-assistant-private-v1";
+    const identify = () => {
+      let token = localStorage.getItem(key);
+      if (!/^[0-9a-f]{64}$/.test(token || "")) {
+        const bytes = crypto.getRandomValues(new Uint8Array(32));
+        token = Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+        localStorage.setItem(key, token);
+      }
+      return token;
+    };
+    // Serialize first visits in parallel tabs when Web Locks is available.
+    const token = navigator.locks
+      ? await navigator.locks.request("lab-private-init", identify) : identify();
+    send("streamlit:setComponentValue", {value:token, dataType:"json"});
+  } catch (_) {
+    // Fail closed: no shared ID or shared storage fallback.
+    send("streamlit:setComponentValue", {value:null, dataType:"json"});
+  }
+});
+send("streamlit:componentReady", {apiVersion:1});
+send("streamlit:setFrameHeight", {height:0});
+</script></body></html>

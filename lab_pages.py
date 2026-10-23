@@ -10,7 +10,6 @@ from __future__ import annotations
 import hashlib
 import html
 import io
-import os
 from datetime import date
 from pathlib import Path
 
@@ -30,6 +29,7 @@ from lab_eln import (
 from lab_exports import docx_bytes, pdf_bytes
 from lab_gel_bridge import build_project, parse_notes
 from lab_locales import tr
+from lab_private_storage import data_folder
 from lab_synthesis import (
     ocr_image,
     protocol_stats,
@@ -400,8 +400,7 @@ def calculator_page() -> None:
 
 # ------------------------------------------------------------------------ notebook
 def _store() -> ELNStore:
-    folder = Path(os.environ.get("LAB_ASSISTANT_DATA_DIR", ROOT / "lab_data"))
-    return ELNStore(folder)
+    return ELNStore(data_folder())
 
 
 def _dark() -> bool:
