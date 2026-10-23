@@ -60,7 +60,6 @@ PROJECTS_DIR.mkdir(exist_ok=True)
 if not st.session_state.get("lab_shell"):
     st.set_page_config(
         page_title="GelDoc Studio · SDS-PAGE",
-        page_icon=Image.open(ROOT / "assets" / "browser_icon.png"),
         layout="wide",
         initial_sidebar_state="expanded",
     )

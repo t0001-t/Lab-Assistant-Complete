@@ -5,13 +5,11 @@ import runpy
 from pathlib import Path
 
 import streamlit as st
-from PIL import Image
 
 ROOT = Path(__file__).resolve().parent
 
 st.set_page_config(
     page_title="Lab Assistant",
-    page_icon=Image.open(ROOT / "assets" / "browser_icon.png"),
     layout="wide",
     initial_sidebar_state="auto",
 )
