@@ -62,7 +62,7 @@ if not st.session_state.get("lab_shell"):
     st.set_page_config(
         page_title="GelDoc Studio · SDS-PAGE",
         page_icon="data:image/png;base64,"
-        + base64.b64encode((ROOT / "assets" / "header_gel.png").read_bytes()).decode("ascii"),
+        + base64.b64encode((ROOT / "assets" / "browser_icon.png").read_bytes()).decode("ascii"),
         layout="wide",
         initial_sidebar_state="expanded",
     )
